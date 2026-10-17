@@ -321,6 +321,9 @@ html[dir="rtl"] .nav::after{transform-origin:right}
 .duo .film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .duo .film::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,rgba(13,10,11,.55))}
 .sound.full{inset-inline:auto;inset-inline-end:14px;padding:0 18px}
+.duo .film video{transition:none}
+.duo .film video.off{opacity:0}
+.film:fullscreen video{object-fit:contain}
 
 /* ---------- behind everything: Karam's own photography, very dark (15%), slowly crossfading ---------- */
 .bgphotos{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--ink)}
@@ -480,7 +483,8 @@ html[dir="rtl"] .dbar i{transform-origin:right}
           <div class="hud mono"><i></i><i></i><i></i><i></i></div>
         </figure>
         <figure class="film">
-          <video id="film" src="media/wide.mp4" poster="media/wide.jpg" autoplay muted loop playsinline preload="auto"></video>
+          <video id="film" src="media/wide-1.mp4" poster="media/wide.jpg" autoplay muted playsinline webkit-playsinline disablepictureinpicture preload="auto"></video>
+          <video id="film-b" class="off" muted playsinline webkit-playsinline disablepictureinpicture preload="auto"></video>
           <div class="hud mono"><i></i><i></i><i></i><i></i></div>
           <button class="sound full" id="film-full" type="button"></button>
         </figure>
@@ -1044,16 +1048,44 @@ function setLang(lang){
 document.getElementById("lang").onclick = () => setLang(LANG === "en" ? "ar" : "en");
 try{ if(localStorage.getItem("lang") === "en") setLang("en"); }catch(e){}
 
-/* hero film: plays silently on its own; the button shows it full screen */
+/* hero film: 1080p in four 20-second parts (GitHub refuses big files), played back to back
+   on two alternating video elements so the switch is invisible; muted, loops forever */
 (function(){
-  const v = document.getElementById("film"), btn = document.getElementById("film-full");
+  const PARTS = ["media/wide-1.mp4", "media/wide-2.mp4", "media/wide-3.mp4", "media/wide-4.mp4"];
+  const box = document.querySelector(".duo .film"), btn = document.getElementById("film-full");
+  let cur = document.getElementById("film"), nxt = document.getElementById("film-b"), i = 0, armed = false;
+  [cur, nxt].forEach(v => { v.muted = true; v.defaultMuted = true; v.setAttribute("muted", ""); });
+  const load = (v, k) => { v.autoplay = false; v.removeAttribute("autoplay"); v.pause(); v.src = PARTS[k % PARTS.length]; v.load(); };
+  load(nxt, 1);
+  function onTime(){
+    if(armed || !cur.duration || cur.duration - cur.currentTime > .25) return;
+    armed = true;
+    nxt.currentTime = 0;
+    nxt.play().then(onNextPlaying).catch(() => { armed = false; });
+  }
+  function onNextPlaying(){
+    if(!armed) return;
+    nxt.classList.remove("off"); cur.classList.add("off"); cur.pause();
+    [cur, nxt] = [nxt, cur]; i = (i + 1) % PARTS.length; armed = false;
+    bind(); load(nxt, i + 1);
+  }
+  function bind(){
+    cur.ontimeupdate = onTime; cur.onplaying = null; cur.onended = () => { if(!armed){ armed = true; nxt.play().then(onNextPlaying).catch(() => { armed = false; }); } };
+    nxt.ontimeupdate = null; nxt.onended = null;
+  }
+  bind();
+  // some phones (iPhone in Low Power Mode, data saver) refuse autoplay: start on the first touch, scroll or click instead
+  const EVTS = ["touchstart", "pointerdown", "scroll", "keydown"];
+  const kick = () => cur.play().then(() => EVTS.forEach(ev => removeEventListener(ev, kick))).catch(() => {});
+  kick();
+  EVTS.forEach(ev => addEventListener(ev, kick, { passive: true }));
+  box.addEventListener("click", e => { if(e.target.closest("button")) return; if(cur.paused) cur.play().catch(() => {}); });
+  new IntersectionObserver(([en]) => { if(en.isIntersecting) cur.play().catch(() => {}); else cur.pause(); }, { threshold: .1 }).observe(box);
   const ICON = '<svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3H4zm10-5h6v5h-2V6h-4V4zM4 15h2v3h3v2H4v-5zm14 3v-3h2v5h-5v-2h3z"/></svg>';
-  v.muted = true; v.play().catch(() => {});
-  new IntersectionObserver(([en]) => { if(en.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .1 }).observe(v);
   const label = () => { btn.innerHTML = ICON + `<span>${LANG === "en" ? "Full screen" : "ملء الشاشة"}</span>`; };
   btn.onclick = () => {
-    if(v.requestFullscreen) v.requestFullscreen().catch(() => {});
-    else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+    if(box.requestFullscreen) box.requestFullscreen().catch(() => {});
+    else if(cur.webkitEnterFullscreen) cur.webkitEnterFullscreen();
   };
   RERENDER.push(label);
   label();
