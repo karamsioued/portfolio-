@@ -393,7 +393,7 @@ html[dir="rtl"] .dbar i{transform-origin:right}
           <div class="hud mono"><i></i><i></i><i></i><i></i></div>
         </figure>
         <figure class="monitor showreel">
-          <img id="showreel-poster" src="media/showreel.jpg" alt="Karam Sioued showreel">
+          <video id="showreel-loop" src="media/showreel.mp4" poster="media/showreel.jpg" autoplay muted loop playsinline preload="auto"></video>
           <div class="hud mono"><i></i><i></i><i></i><i></i><div class="row"><span class="rec">REC</span><span>Showreel</span></div><div class="row"><span></span><span>00:00:52:00</span></div></div>
           <button class="sound" id="sound" type="button"></button>
         </figure>
@@ -951,14 +951,21 @@ function setLang(lang){
 document.getElementById("lang").onclick = () => setLang(LANG === "en" ? "ar" : "en");
 try{ if(localStorage.getItem("lang") === "en") setLang("en"); }catch(e){}
 
-/* showreel: plays from Google Drive inside the hero frame */
+/* showreel: a silent loop moves in the hero frame; the button opens the full version with sound from Google Drive */
 const SHOWREEL_ID = "1mxYAtzDcN7_tcZE-7DG2fmBZav4tCdAh";
 (function(){
   const box = document.querySelector(".showreel"), btn = document.getElementById("sound");
   const ICON = '<svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg>';
   function label(){ btn.innerHTML = ICON + `<span>${LANG === "en" ? "Watch the showreel" : "شاهد الشوريل"}</span>`; }
-  btn.onclick = () => {
-    box.classList.add("playing");
+const loop = document.getElementById("showreel-loop");
+loop.muted = true; loop.play().catch(() => {});
+new IntersectionObserver(([en]) => {
+  if(box.classList.contains("playing")) return;
+  if(en.isIntersecting) loop.play().catch(() => {}); else loop.pause();
+}, { threshold: .1 }).observe(box);
+btn.onclick = () => {
+  loop.pause();
+  box.classList.add("playing");
     btn.remove();
     box.insertAdjacentHTML("beforeend", `<iframe src="https://drive.google.com/file/d/${SHOWREEL_ID}/preview" allow="autoplay; fullscreen" allowfullscreen title="Showreel"></iframe>`);
   };
