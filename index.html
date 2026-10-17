@@ -217,7 +217,7 @@ footer .wrap{padding-block:22px;display:flex;flex-wrap:wrap;justify-content:spac
 .award p{color:rgba(243,239,232,.88)}
 .lb-actions a,.lb-actions button{border-color:rgba(243,239,232,.28)}
 .lb-actions a:hover,.lb-actions button:hover{border-color:var(--sand-light);color:var(--sand-light)}
-.contact{background:var(--surface)}
+.contact{background:rgba(23,17,18,.72)}
 
 /* ---------- hero photo (square studio portrait) ---------- */
 .stage{grid-template-columns:minmax(0,1.78fr) minmax(0,1fr);align-items:center}
@@ -258,6 +258,52 @@ html[lang="en"] h2,html[lang="en"] h3,html[lang="en"] .hero h1 span{font-weight:
 @keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
 .js .intro video{animation:introIn 1.6s ease both}
 @keyframes introIn{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
+/* ---------- softer, livelier surfaces: rounded media, pills, glow ---------- */
+:root{--r-lg:22px;--r-md:14px;--glow:0 30px 80px -30px rgba(138,21,56,.6)}
+.card,.deck .slide,.hero-photo,.duo .film,.monitor,.shot,.portrait,.award,.lb-frame{border-radius:var(--r-lg);overflow:hidden}
+.portrait::after{border-radius:var(--r-md)}
+.hud i{display:none}
+.deck .slide.active{box-shadow:var(--glow),0 0 0 1px rgba(239,231,218,.1)}
+.deck .slide.active:hover{filter:brightness(1.06)}
+.hero-photo,.duo .film{box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 0 0 1px rgba(239,231,218,.08)}
+
+/* glowing ambience behind the hero media */
+.stage{position:relative;isolation:isolate}
+.stage::before{content:"";position:absolute;inset:8% 6%;z-index:-1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(138,21,56,.55),rgba(205,179,138,.12) 60%,transparent);filter:blur(50px);
+  animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.92);opacity:.7}50%{transform:scale(1.05);opacity:1}}
+
+/* buttons: pills with a passing shine */
+.btn,.lang,.sound,.lb-actions a,.lb-actions button{border-radius:999px}
+.btn{position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.2,1),background .25s,border-color .25s,color .25s}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.28),transparent 70%);transform:translateX(-130%);transition:transform .8s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover::after{transform:translateX(130%)}
+.btn.primary{box-shadow:0 14px 34px -14px rgba(138,21,56,.9)}
+
+/* tabs: pills, the selected one filled */
+.tabs{border-bottom:0;gap:8px;padding:4px 2px 6px}
+.tab{border:1px solid var(--line);border-radius:999px;padding:9px 20px;margin:0;border-bottom-width:1px;transition:background .3s,color .3s,border-color .3s}
+.tab:hover{border-color:rgba(239,231,218,.35)}
+.tab[aria-selected="true"]{background:var(--maroon);border-color:var(--maroon);color:var(--ivory);box-shadow:0 10px 26px -12px rgba(138,21,56,.9)}
+
+/* awards and gear as soft cards that lift */
+.award{transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}
+.award:hover{transform:translateY(-6px);box-shadow:var(--glow)}
+.gear-col{background:rgba(239,231,218,.035);border:1px solid var(--line);border-radius:var(--r-lg);padding:26px 24px 10px;transition:transform .45s cubic-bezier(.2,.7,.2,1),border-color .3s,background .3s}
+.gear-col:hover{transform:translateY(-6px);border-color:rgba(205,179,138,.45);background:rgba(239,231,218,.055)}
+.gear-col li:last-child{border-bottom:0}
+.channels a{transition:padding .3s,color .25s}
+.channels a:hover{padding-inline-start:12px}
+
+
+/* reading progress line under the nav */
+.nav::after{content:"";position:absolute;inset-inline:0;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--maroon),var(--sand));transform:scaleX(var(--p,0));transform-origin:left}
+html[dir="rtl"] .nav::after{transform-origin:right}
+
+@media (prefers-reduced-motion:reduce){ .stage::before{animation:none} }
+
 @media (max-width:860px){
   .intro{height:auto;min-height:0;aspect-ratio:16/9}
   .intro-cue{display:none}
@@ -265,6 +311,39 @@ html[lang="en"] h2,html[lang="en"] h3,html[lang="en"] .hero h1 span{font-weight:
   .intro-hud span:nth-child(2){display:none}
 }
 @media (prefers-reduced-motion:reduce){ .intro-cue i,.js .intro video{animation:none} }
+
+/* ---------- hero: copy above, studio portrait beside the wide film ---------- */
+.hero .wrap{grid-template-columns:minmax(0,1fr)}
+.stage.duo{grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);align-items:stretch;justify-items:stretch;gap:clamp(10px,1.4vw,18px);direction:inherit}
+.duo .hero-photo{aspect-ratio:auto;height:100%;min-height:100%}
+.duo figure{margin:0}
+.duo .film{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
+.duo .film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.duo .film::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,rgba(13,10,11,.55))}
+.sound.full{inset-inline:auto;inset-inline-end:14px;padding:0 18px}
+
+/* ---------- behind everything: Karam's own photography, very dark (15%), slowly crossfading ---------- */
+.bgphotos{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--ink)}
+.bgphotos i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;filter:saturate(.75);
+  animation:bgcycle 49s linear infinite}
+.bgphotos i:nth-child(1){animation-delay:-1s}
+.bgphotos i:nth-child(2){animation-delay:6s}
+.bgphotos i:nth-child(3){animation-delay:13s}
+.bgphotos i:nth-child(4){animation-delay:20s}
+.bgphotos i:nth-child(5){animation-delay:27s}
+.bgphotos i:nth-child(6){animation-delay:34s}
+.bgphotos i:nth-child(7){animation-delay:41s}
+@keyframes bgcycle{
+  0%{opacity:0;transform:scale(1.08)}
+  4.08%{opacity:.15}
+  16.33%{opacity:.15}
+  20.41%{opacity:0;transform:scale(1)}
+  100%{opacity:0;transform:scale(1)}
+}
+.bgphotos::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,10,11,.35),rgba(13,10,11,.15) 40%,rgba(13,10,11,.45))}
+.nav,main,footer{position:relative;z-index:1}
+.nav{position:sticky}
+@media (prefers-reduced-motion:reduce){ .bgphotos i{animation:none} .bgphotos i:first-child{opacity:.15} }
 
 /* ---------- motion: smooth scroll, reveals, hero entrance ---------- */
 html.lenis,html.lenis body{height:auto}
@@ -332,6 +411,9 @@ html[dir="rtl"] .dbar i{transform-origin:right}
   .cv .mono{padding-top:0}
   .hero h1{text-align:right}
   .monitors,.stage{max-width:520px;margin-inline:auto;width:100%}
+  .stage.duo{max-width:none;grid-template-columns:minmax(0,1fr)}
+  .duo .film{order:-1}
+  .duo .hero-photo{aspect-ratio:4/5;height:auto}
   .strip{--rh:230px}
   .deck.stack{--dh:440px}
   .deck.album{--dh:360px}
@@ -355,15 +437,24 @@ html[dir="rtl"] .dbar i{transform-origin:right}
 </head>
 <body>
 
+<div class="bgphotos" aria-hidden="true">
+  <i style="background-image:url(media/thumbs/1_sEgUcIK-aIwVd1hdns-V8DqhlNYi7bV.jpg)"></i>
+  <i style="background-image:url(media/thumbs/1y9uu0EkEloimdGK2FzxP3RLdFyFjKLHX.jpg)"></i>
+  <i style="background-image:url(media/thumbs/15RSNxyb4m05OSH-xrtj4Uwmf4sNN5wj-.jpg)"></i>
+  <i style="background-image:url(media/thumbs/1MdyMeseA3WxrNJkvyEVcIoK5w08zaG2y.jpg)"></i>
+  <i style="background-image:url(media/thumbs/16H4EwTPUe929NsgKM4MCHgSGkzhWcyyt.jpg)"></i>
+  <i style="background-image:url(media/thumbs/1lgr4Plk2YRVr6Gq8NydKxIz85RaCUsRJ.jpg)"></i>
+  <i style="background-image:url(media/thumbs/1RXzlhpTKOwMSa6XrhTVRJjDjj53Ur1NC.jpg)"></i>
+</div>
 <header class="nav">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="KARAM">KARAM</a>
     <nav aria-label="أقسام الموقع">
-      <a href="#me">عنّي</a>
       <a href="#work">الأعمال</a>
+      <a href="#stills">فوتوغراف</a>
       <a href="#awards">الجوائز</a>
       <a href="#gear">العتاد</a>
-      <a href="#stills">فوتوغراف</a>
+      <a href="#me">عنّي</a>
       <a class="cta" href="#contact">تواصل</a>
     </nav>
     <button class="lang" id="lang" type="button" aria-label="Switch to English">EN</button>
@@ -371,10 +462,6 @@ html[dir="rtl"] .dbar i{transform-origin:right}
 </header>
 
 <main id="top">
-  <section class="intro" aria-label="Showreel">
-    <video id="intro-video" src="media/wide.mp4" poster="media/wide.jpg" autoplay muted loop playsinline preload="auto"></video>
-    <a class="intro-cue" href="#intro-end"><span>مرّر للأسفل</span><i></i></a>
-  </section>
   <section class="hero" id="intro-end">
     <div class="wrap">
       <div class="hero-copy">
@@ -387,51 +474,27 @@ html[dir="rtl"] .dbar i{transform-origin:right}
         </div>
       </div>
 
-      <div class="stage">
+      <div class="stage duo">
         <figure class="hero-photo">
           <img src="media/k7.jpg" alt="كرم في الاستوديو وخلفه كاميرات وإضاءة">
           <div class="hud mono"><i></i><i></i><i></i><i></i></div>
         </figure>
-        <figure class="monitor showreel">
-          <video id="showreel-loop" src="media/showreel.mp4" poster="media/showreel.jpg" autoplay muted loop playsinline preload="auto"></video>
-          <div class="hud mono"><i></i><i></i><i></i><i></i><div class="row"><span class="rec">REC</span><span>Showreel</span></div><div class="row"><span></span><span>00:00:52:00</span></div></div>
-          <button class="sound" id="sound" type="button"></button>
+        <figure class="film">
+          <video id="film" src="media/wide.mp4" poster="media/wide.jpg" autoplay muted loop playsinline preload="auto"></video>
+          <div class="hud mono"><i></i><i></i><i></i><i></i></div>
+          <button class="sound full" id="film-full" type="button"></button>
         </figure>
       </div>
     </div>
   </section>
 
-<section class="section me" id="me">
-  <div class="wrap me-grid">
-    <figure class="portrait">
-      <img src="media/k2.jpg" alt="Karam Sioued" id="portrait-img">
-      <figcaption class="mono">Karam Sioued · Doha</figcaption>
-    </figure>
-    <div class="me-copy">
-      <span class="eyebrow mono">About</span>
-      <h2>أنا كرم، أحكي بالكاميرا.</h2>
-      <p>مصوّر فيديو ومونتير وطيّار درون، مقيم في الدوحة. بدأت من ورقلة في الجزائر بتغطية نشاطات الولاية، ثم انتقلت إلى قطر حيث أصوّر السيارات والعقارات والإعلانات.</p>
-      <p>أتولّى العمل كاملاً: التصوير، الإضاءة، المونتاج، التلوين، والتصميم عند الحاجة. أحب اللقطة الهادئة والحركة الناعمة، وأن يُفهم المكان أو المنتج من أول ثانية.</p>
-      <dl class="kit">
-        <div><dt>التخصص</dt><dd>تصوير، مونتاج، تلوين، درون</dd></div>
-        <div><dt>الدراسة</dt><dd>ماستر تسويق الخدمات، جامعة قاصدي مرباح، 2022</dd></div>
-        <div><dt>اللغات</dt><dd>العربية · الإنجليزية · الفرنسية</dd></div>
-      </dl>
-    </div>
-  </div>
-</section>
 
-<section class="section shots" id="shots">
-  <div class="wrap">
-    <div class="head">
-      <h2>خلف الكاميرا</h2>
-      <p>في مواقع التصوير، بين الجزائر وقطر.</p>
-    </div>
-    <div class="deck album" id="shots-deck"></div>
-  </div>
-</section>
 
-<section class="section work" id="work">
+
+
+
+
+  <section class="section work" id="work">
   <div class="wrap">
     <div class="head">
       <h2>الأعمال</h2>
@@ -442,7 +505,18 @@ html[dir="rtl"] .dbar i{transform-origin:right}
   </div>
 </section>
 
-<section class="section awards" id="awards">
+  <section class="section" id="stills">
+    <div class="wrap">
+      <div class="head">
+        <h2>التصوير الفوتوغرافي</h2>
+        <p>صور من الأرض ومن الجو.</p>
+      </div>
+      <div class="tabs" role="tablist" id="stills-tabs" aria-label="الصور والتصاميم"></div>
+      <div class="deck album" id="stills-deck"></div>
+    </div>
+  </section>
+
+  <section class="section awards" id="awards">
   <div class="wrap">
     <div class="head">
       <h2>جوائز وإنجازات</h2>
@@ -454,7 +528,7 @@ html[dir="rtl"] .dbar i{transform-origin:right}
   </div>
 </section>
 
-<section class="section gear" id="gear">
+  <section class="section gear" id="gear">
   <div class="wrap">
     <div class="head">
       <h2>العتاد</h2>
@@ -490,16 +564,35 @@ html[dir="rtl"] .dbar i{transform-origin:right}
   </div>
 </section>
 
-  <section class="section" id="stills">
-    <div class="wrap">
-      <div class="head">
-        <h2>التصوير الفوتوغرافي</h2>
-        <p>صور من الأرض ومن الجو.</p>
-      </div>
-      <div class="tabs" role="tablist" id="stills-tabs" aria-label="الصور والتصاميم"></div>
-      <div class="deck album" id="stills-deck"></div>
+  <section class="section me" id="me">
+  <div class="wrap me-grid">
+    <figure class="portrait">
+      <img src="media/k2.jpg" alt="Karam Sioued" id="portrait-img">
+      <figcaption class="mono">Karam Sioued · Doha</figcaption>
+    </figure>
+    <div class="me-copy">
+      <span class="eyebrow mono">About</span>
+      <h2>أنا كرم، أحكي بالكاميرا.</h2>
+      <p>مصوّر فيديو ومونتير وطيّار درون، مقيم في الدوحة. بدأت من ورقلة في الجزائر بتغطية نشاطات الولاية، ثم انتقلت إلى قطر حيث أصوّر السيارات والعقارات والإعلانات.</p>
+      <p>أتولّى العمل كاملاً: التصوير، الإضاءة، المونتاج، التلوين، والتصميم عند الحاجة. أحب اللقطة الهادئة والحركة الناعمة، وأن يُفهم المكان أو المنتج من أول ثانية.</p>
+      <dl class="kit">
+        <div><dt>التخصص</dt><dd>تصوير، مونتاج، تلوين، درون</dd></div>
+        <div><dt>الدراسة</dt><dd>ماستر تسويق الخدمات، جامعة قاصدي مرباح، 2022</dd></div>
+        <div><dt>اللغات</dt><dd>العربية · الإنجليزية · الفرنسية</dd></div>
+      </dl>
     </div>
-  </section>
+  </div>
+</section>
+
+  <section class="section shots" id="shots">
+  <div class="wrap">
+    <div class="head">
+      <h2>خلف الكاميرا</h2>
+      <p>في مواقع التصوير، بين الجزائر وقطر.</p>
+    </div>
+    <div class="deck album" id="shots-deck"></div>
+  </div>
+</section>
 
   <section class="contact" id="contact">
     <div class="wrap">
@@ -928,7 +1021,7 @@ const EN = {
   "درون":"Drone", "للتصوير الجوي":"Aerial filming", "إكسسوارات":"Accessories", "ملحقات مساندة للتصوير حسب كل موقع":"Supporting kit, chosen per location",
   "صور من الأرض ومن الجو.":"Photographs from the ground and from the air.",
   "للتواصل":"Get in touch", "يسعدني التعارف والحديث عن الصورة والتصوير.":"Happy to connect and talk about images and filmmaking.",
-  "الدوحة، قطر":"Doha, Qatar", "مرّر للأسفل":"Scroll", "فتح في Drive":"Open in Drive", "إغلاق ✕":"Close ✕"
+  "الدوحة، قطر":"Doha, Qatar", "عقارات":"Real Estate", "سيارات":"Automotive", "إعلانات":"Commercial", "تصوير جوي":"Aerial", "تغطيات صحفية":"Press", "برامج ولقاءات":"Programs", "مونتاج":"Editing", "تلوين":"Color Grading", "مرّر للأسفل":"Scroll", "فتح في Drive":"Open in Drive", "إغلاق ✕":"Close ✕"
 };
 function setLang(lang){
   LANG = lang;
@@ -951,32 +1044,26 @@ function setLang(lang){
 document.getElementById("lang").onclick = () => setLang(LANG === "en" ? "ar" : "en");
 try{ if(localStorage.getItem("lang") === "en") setLang("en"); }catch(e){}
 
-/* showreel: a silent loop moves in the hero frame; the button opens the full version with sound from Google Drive */
-const SHOWREEL_ID = "1mxYAtzDcN7_tcZE-7DG2fmBZav4tCdAh";
+/* hero film: plays silently on its own; the button shows it full screen */
 (function(){
-  const box = document.querySelector(".showreel"), btn = document.getElementById("sound");
-  const ICON = '<svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg>';
-  function label(){ btn.innerHTML = ICON + `<span>${LANG === "en" ? "Watch the showreel" : "شاهد الشوريل"}</span>`; }
-const loop = document.getElementById("showreel-loop");
-loop.muted = true; loop.play().catch(() => {});
-new IntersectionObserver(([en]) => {
-  if(box.classList.contains("playing")) return;
-  if(en.isIntersecting) loop.play().catch(() => {}); else loop.pause();
-}, { threshold: .1 }).observe(box);
-btn.onclick = () => {
-  loop.pause();
-  box.classList.add("playing");
-    btn.remove();
-    box.insertAdjacentHTML("beforeend", `<iframe src="https://drive.google.com/file/d/${SHOWREEL_ID}/preview" allow="autoplay; fullscreen" allowfullscreen title="Showreel"></iframe>`);
+  const v = document.getElementById("film"), btn = document.getElementById("film-full");
+  const ICON = '<svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3H4zm10-5h6v5h-2V6h-4V4zM4 15h2v3h3v2H4v-5zm14 3v-3h2v5h-5v-2h3z"/></svg>';
+  v.muted = true; v.play().catch(() => {});
+  new IntersectionObserver(([en]) => { if(en.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .1 }).observe(v);
+  const label = () => { btn.innerHTML = ICON + `<span>${LANG === "en" ? "Full screen" : "ملء الشاشة"}</span>`; };
+  btn.onclick = () => {
+    if(v.requestFullscreen) v.requestFullscreen().catch(() => {});
+    else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
   };
   RERENDER.push(label);
   label();
 })();
-/* intro film: always muted, paused while scrolled away */
+
+/* reading progress */
 (function(){
-  const v = document.getElementById("intro-video");
-  v.muted = true; v.play().catch(() => {});
-  new IntersectionObserver(([en]) => { if(en.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: .05 }).observe(v);
+  const nav = document.querySelector(".nav");
+  const upd = () => { const h = document.documentElement.scrollHeight - innerHeight; nav.style.setProperty("--p", h > 0 ? Math.min(1, scrollY / h) : 0); };
+  addEventListener("scroll", upd, { passive: true }); upd();
 })();
 
 /* ============ motion ============ */
@@ -992,8 +1079,6 @@ btn.onclick = () => {
       e.preventDefault(); lenis.scrollTo(t, { offset: -64, duration: 1.5 });
     }));
     // a slow drift on the hero portrait
-    const img = document.querySelector(".hero-photo img");
-    lenis.on("scroll", ({ scroll }) => { if(scroll < 1200) img.style.transform = `scale(1.08) translateY(${scroll * .06}px)`; });
   }
   // sections rise into place as they enter the screen
   const groups = [".section .head", ".tabs", ".deck", ".portrait", ".me-copy > *", ".award", ".gear-col", ".channels > *", ".contact h2", ".contact p"];
