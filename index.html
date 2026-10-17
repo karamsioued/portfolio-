@@ -297,7 +297,8 @@ html.lenis{scroll-behavior:auto}
 .deck.album .slide .main{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform:none}
 .deck.album .slide::after{display:none}
 .deck .slide:hover img,.deck .slide:focus-visible img{transform:none}
-.deck.stack .slide.active:hover img{transform:scale(1.04)}
+.deck.stack .slide.active:hover img,.deck.stack .slide.active:hover .sp{transform:scale(1.04)}
+.deck .slide .sp{position:absolute;inset:0;background-repeat:no-repeat;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
 .deck .slide:not(.active) .play,.deck .slide:not(.active) .meta{opacity:0}
 .deck .slide .play,.deck .slide .meta{transition:opacity .5s}
 .deck-ui{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:22px}
@@ -671,6 +672,13 @@ function retryThumb(img, id, w, video){
   if(n === 1){ setTimeout(() => { img.src = (video ? drive + "&r=1" : lh3 + "?r=1"); }, 1500 + Math.random()*2500); return true; }
   return false;
 }
+/* video thumbnails are packed into a few sprite sheets: id -> [sheet, col, row, cols, rows] */
+const SPRITE = {"1pAedRztrxnwB2aeBqt6D8U-669BfALFC":["v1",0,0,4,3],"1iLfM647ZjGpW8J-T-XNL6_Uv4oqhFldB":["v1",1,0,4,3],"1VlSIz3SU1KBCLhKQDDKiVZmnrk61Tm9o":["v1",2,0,4,3],"1FuCR5OB4pQdH4r9mPViGcxwuBiAMPXC-":["v1",3,0,4,3],"1z9uIQF-JkjO4k21Yv3QQTaLSBm5sfX1h":["v1",0,1,4,3],"1Q2TGOdLp5TWfXugcxGL-q-QrC4NGIrnF":["v1",1,1,4,3],"1kcvaOXRj9nQ2lXwb3Fpjmz82Egr0VZZw":["v1",2,1,4,3],"1PlDoSKvlNiNXvd0u_Re36Mjo39IBW1JX":["v1",3,1,4,3],"19iHwnhMERW99CxZ-W_a4P_gVsBFFokhn":["v1",0,2,4,3],"1NzGwn7aKnrmgkZMRyBrR9T1ICx-JkFEL":["v1",1,2,4,3],"1eJyM_KRyhVEG5Jo0lZ3RpC1fDahDRxap":["v1",2,2,4,3],"1QxZg40YAfS5UItrktvX4bUlzmSIpDFBM":["v1",3,2,4,3],"1Tm7A-btSoBeCREIzhNw-mqfL_8YZaVXK":["v2",0,0,4,3],"1NFmOlT57M06Y9zRHNf1fdeZ0ISql04Bj":["v2",1,0,4,3],"1qYUOSaxGeXdpNAxOXPsfxiNKLDO0pkta":["v2",2,0,4,3],"1APK0Fpy2MgbZLNeNjCpgYavogChX_chA":["v2",3,0,4,3],"19FhuHfhoxa5MgqC2aBw4VC5oEkci5p2J":["v2",0,1,4,3],"1P6i2iH6CNfDwmadcY4OWwjLvV2dQWoof":["v2",1,1,4,3],"1kUuibGfHPkebJCTPG5BeQl0NGzjA2OKC":["v2",2,1,4,3],"1fEJY3DAB81d8_cAZ2ZPQ1JZytGfCPJh2":["v2",3,1,4,3],"12-Gpm-IGvZXV8kb14HBcPOJTvHeLsQvW":["v2",0,2,4,3],"1_7v3M19e4RE9SIDYdUxcau-YI-PpAgwf":["v2",1,2,4,3],"1r_xZFRaEli8auJKtEQKDx9CI-RgMUPqB":["v2",2,2,4,3],"1Cw_phHkBVGwTMjaVMfSu0i8A3-MNOl36":["v2",3,2,4,3],"1YSXxH1-YMIZLvksLpp6s5QgGlBEhG7m9":["v3",0,0,4,3],"1BSFflNskZqh4gYMQuSn4s2jUa6sgd5Tw":["v3",1,0,4,3],"1YbQrh41HBl2f2veCgNnZtEK9t9XWUDon":["v3",2,0,4,3],"18T2zFovPry2SY2gGiEkjra1mr_viGHAJ":["v3",3,0,4,3],"113IzBs3jN97fLL2_JP1L-StDUxOH9u_7":["v3",0,1,4,3],"1fhHXUPn6lMgnGKCax3qMqF5yFNap27Zd":["v3",1,1,4,3],"1WuwfcKxQUw1Dx2lrZQHJ8_vfq4vX0Jix":["v3",2,1,4,3],"1nb6V45ENorK5Y7lbbSB_m84FWhtrFfEX":["v3",3,1,4,3],"1ll2A6RolKpuDWoOhXnRiLIFtrIahd1Vg":["v3",0,2,4,3],"10D02KSiFQ-YKZnLBGovaJY8dNJqpQ69H":["v3",1,2,4,3],"1sSHHXCy21Y0rsIGNRn1mn3HyjlFsWYis":["v3",2,2,4,3],"1laFONlVaadywkcLDABPE-Bx7LAERUsoS":["v3",3,2,4,3],"1TjWXD3mqbg-GM4Q4NBjR6DxK-MgbDELE":["v4",0,0,4,3],"1pPk0ki34QKl--HZ2gbVvtFHaHSuyW2Pa":["v4",1,0,4,3],"1itm8vLuALKnpTe9nmA3ydxMwRHsVDqZg":["v4",2,0,4,3],"1VnYeB7Jq7qYutA1IaEe_IN9fD34P2BU_":["v4",3,0,4,3],"1KI_QoqRzI40TH_PWyDieQj9_mbHucmBd":["v4",0,1,4,3],"1P73xCvOmtZRnY79trn70Wi35slcU0r6k":["v4",1,1,4,3],"1NXxUAB7GWQDumrImjVe314Ym0M9ZhjSo":["v4",2,1,4,3],"14u7ClIbVx2iQEkm7yUsalFpLtulfldOy":["v4",3,1,4,3],"1CbIpZXNN7yyH7AVm7jL5xImSGK7d1M04":["v4",0,2,4,3],"1GN0hkezYUDDzh_orpO221z19UOA_TiFL":["v4",1,2,4,3],"1UMXUIGBJv_uxTJOA3hlvwkv_QYXJR702":["v4",2,2,4,3],"1LQgBqDDiUzTO9w0w9j0TsGviXMEU-Jl0":["v4",3,2,4,3],"1bSyflmGnxT4Ro9OX6mxC_-m9MGPuF1Jr":["v5",0,0,4,2],"1ZMLvAvJT9C0ewhAXfsW7ue02L78lgRoa":["v5",1,0,4,2],"11x77t70PRuCtCBAyuozst85-LOy1k-bU":["v5",2,0,4,2],"1kWUUlbK8aRQpBkiEGDePgUy-TLZ4hsja":["v5",3,0,4,2],"1r1QiEL3OPfky1humSt1NVIP3pnHqvRe-":["v5",0,1,4,2],"191jC3bXdpc-5RVJ0wHdNEdSpeaZ-zXev":["h1",0,0,3,4],"14-X_P-MR2BUG9AP5argPsCxz2F6Tet4D":["h1",1,0,3,4],"1APrgPbrSP3XZ8V4EPBqfQKgepnwQWo76":["h1",2,0,3,4],"18hnoy9d6s0L2tQLTPtNo-ibD3DdP4Xeo":["h1",0,1,3,4],"1TZopMMMEZS7Yvrdc5LQfA3cCAwZHOuKp":["h1",1,1,3,4],"1Sq_jfyiWB1GkAcFLfewaO4WC4prQmLXU":["h1",2,1,3,4],"1n2Epm6pLVDgZNYbDpSn-7tqX1yqLdDo4":["h1",0,2,3,4],"1Ek8yMmGDUGrBB-_79O_G090v3nv4FInx":["h1",1,2,3,4],"1Wvqya0miv3UXNzyKFEWXgRuXp-rcrSbY":["h1",2,2,3,4],"1UeUjWpCoJAYXUHZGo9653DDdQKXCNivg":["h1",0,3,3,4],"1Gfx0sJSYTzDOfHwGZfudRRojJM2G_Ss6":["h1",1,3,3,4],"1C8XdpwGCYDgUKIOurdRLjJaINUA-9vmx":["h1",2,3,3,4],"1MwB1CC72wUiiTD5qsEdbk3YfXOVIzUOc":["h2",0,0,3,4],"1VTyxcS0lYGBATx-VHJ8AFLtGQEUzoLWO":["h2",1,0,3,4],"1Il8UN-sJPGks3n7O3iGAWyj-crxAPwp6":["h2",2,0,3,4],"1uO0jRkxRwvixJmRQ1aSkGxOb5Zzk1a0z":["h2",0,1,3,4],"1_znyuja28LqZtmtrYki5OjDAWvl5DkAG":["h2",1,1,3,4],"1vjrLo0IfbN7TpEHwUeM_GRCezBsjFIwJ":["h2",2,1,3,4],"1W9YjSusYrjwh6NPy8H8_xDBYkaMSVc3d":["h2",0,2,3,4],"1YapT19agTFuwgBtjSSIx41hx0MzDJnZy":["h2",1,2,3,4],"1Sza9swBh4ZwQsVotEpllh1FyTOoMCYng":["h2",2,2,3,4],"1kdcu_OxtDmSo-CSedUBICQS32oW7Mezl":["h2",0,3,3,4],"1z6GFNfaUmghfC-aZY6ZnvDT5Pk2L2bRc":["h2",1,3,3,4],"1GxlSuRk3Hhs6o9i-0rl57F2P238wH3hG":["h2",2,3,3,4],"1jkjtDSbQwJ-T_qsfAwpngDSMNZSXbScw":["h3",0,0,3,4],"1NXC8ny1HkClyFErdcfE9MSHJdCryG3zV":["h3",1,0,3,4],"1v8KvwLTa-o_Fhh4Dtho5kQz17WGuwiCh":["h3",2,0,3,4],"1JwoozKb_GtWuiURqsQZjB0ouS8TvsuYj":["h3",0,1,3,4],"1pi6jwc_iStvgQVmwtA-c6eqtRxQQYHEk":["h3",1,1,3,4],"1f_iN5z4YZUACy3EkqWRaeLC3s4Z-GeE6":["h3",2,1,3,4],"1ypSjZ2D1oBWn0uFZTvbIDON4-o_5RhdR":["h3",0,2,3,4],"1X9XsnLHCKnRnpqkQpAHnDN__XWtzjaSL":["h3",1,2,3,4],"1VoD4nd4Y8PWC6bGVCx4FVRWF7I3Vdpan":["h3",2,2,3,4],"1BQcZsnO8DlScCdIpQ1Xl5g6ub35uXuee":["h3",0,3,3,4],"1Glg8_lOHdMje1re0z5UwwWw2e0VQzA7d":["h3",1,3,3,4],"16IsvPciCCt1eLnpjNAWFnnCESjU6Dr_6":["h3",2,3,3,4],"1JVPY1sSoKQi4g1kj9H0Bw4VqofU3BtUX":["h4",0,0,3,2],"1qx68v_485xsWDgPOrjcKS-r0AOepe1Au":["h4",1,0,3,2],"1r0P4ju1P6EeJ4ECo58mig15mJ2ALc1pv":["h4",2,0,3,2],"1KrW_4sQNnI0RhYattu_LPwRvsw7UIDCs":["h4",0,1,3,2],"1vK9yStrC4yvyxiGCNKNx8jcQ0K9rzBYW":["h4",1,1,3,2],"1BCts_t3EV0U4CeEc_ACSNsK9kYbHCShx":["h4",2,1,3,2]};
+function spriteStyle(id){
+  const p = SPRITE[id]; if(!p) return "";
+  const [sh, c, r, cols, rows] = p;
+  return `background-image:url(media/thumbs/sheet-${sh}.jpg);background-size:${cols*100}% ${rows*100}%;background-position:${cols>1 ? c/(cols-1)*100 : 0}% ${rows>1 ? r/(rows-1)*100 : 0}%`;
+}
 const vthumb = (id,w) => LOCAL_THUMB[id] || `media/thumbs/${id}.jpg`;
 const PLAY = '<span class="play" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg></span>';
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -704,11 +712,11 @@ class Deck{
       const meta = it.image ? "" : `<span class="meta"><span class="mono">${it.g.en}</span>${LANG==="ar" ? `<b>${it.g.ar}</b>` : ""}</span>`;
       b.innerHTML = mode === "album"
         ? `<img class="bg" alt="" data-src="${src}"><img class="main" alt="" data-src="${src}">${meta}`
-        : `<img alt="" data-src="${src}">${it.image ? "" : PLAY}${meta}`;
+        : (!it.image && SPRITE[it.id] ? `<span class="sp" data-bg="${spriteStyle(it.id)}"></span>` : `<img alt="" data-src="${src}">`) + `${it.image ? "" : PLAY}${meta}`;
       b.setAttribute("aria-label", it.image ? L(it.g) : `${L(it.g)} ▶`);
       b.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { if(!it.id || !retryThumb(img, it.id, w, !it.image)) b.classList.add("noimg"); }));
       const main = b.querySelector(".main") || b.querySelector("img");
-      main.addEventListener("load", () => { it.ratio = main.naturalWidth / main.naturalHeight; });
+      if(main) main.addEventListener("load", () => { it.ratio = main.naturalWidth / main.naturalHeight; });
       this.stage.appendChild(b);
       return b;
     });
@@ -782,7 +790,10 @@ class Deck{
       s.style.pointerEvents = ad > 3 ? "none" : "";
       s.tabIndex = ad === 0 ? 0 : -1;
       s.classList.toggle("active", ad === 0);
-      if(ad <= 3) s.querySelectorAll("img[data-src]").forEach(img => { img.src = img.dataset.src; img.removeAttribute("data-src"); });
+      if(ad <= 3){
+        s.querySelectorAll("img[data-src]").forEach(img => { img.src = img.dataset.src; img.removeAttribute("data-src"); });
+        s.querySelectorAll(".sp[data-bg]").forEach(sp => { sp.style.cssText = sp.dataset.bg; sp.removeAttribute("data-bg"); });
+      }
     });
     this.count.innerHTML = `<b>${pad2(this.a + 1)}</b> / ${pad2(n)}`;
   }
